@@ -2,6 +2,7 @@
 #define COMMON_STACK_H
 
 #include <stdbool.h>
+#include <stddef.h>   /* NULL */
 
 /* 存 void* 的通用栈：树结点、链表结点、任何指针都能装。
    元素类型不固定，所以不做类型检查，取出时自行强转。 */

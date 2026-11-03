@@ -2,6 +2,7 @@
 #define COMMON_QUEUE_H
 
 #include <stdbool.h>
+#include <stddef.h>   /* NULL */
 
 /* 循环队列，牺牲一个单元区分空/满。
    层序遍历、BFS 用它；判满条件是 (rear+1)%N == front。 */

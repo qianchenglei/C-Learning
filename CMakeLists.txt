@@ -70,4 +70,7 @@ add_executable(05_linked_bi_tree
     05-tree/linked-bi-tree/main.c
     05-tree/linked-bi-tree/LinkedOfBinaryTree.c
     05-tree/linked-bi-tree/Stack.c
+    common/queue.c          # 层序遍历用：void* 通用循环队列
 )
+# 让本目标能 #include "queue.h"（只引队列实现，不引 common 的 stack.c，避免与自带 Stack.c 符号冲突）
+target_include_directories(05_linked_bi_tree PRIVATE common)

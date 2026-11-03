@@ -2,6 +2,8 @@
 // Created by 14266 on 2026/11/2.
 //
 #include "Stack.h"
+#include <string.h>   /* memset */
+#include <stddef.h>   /* NULL */
 
 void InitStack(Stack *S) {
     if (S == NULL) {

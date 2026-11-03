@@ -1,5 +1,7 @@
 #include"LinkedOfBinaryTree.h"
-#include "Stack.h"
+#include <stdlib.h>   /* malloc */
+#include <stddef.h>   /* NULL */
+#include "queue.h"    /* common 的 void* 队列，层序遍历用 */
 static char SeqNext(const ElementType **Seq) {
     char Ch = **Seq;
     if(Ch != '\0') {(*Seq)++;}
@@ -95,5 +97,31 @@ int LeafCount(const BinaryTree *Node) {
     }
     return LeafCount(Node->Left) + LeafCount(Node->Right);
 }
+
+bool IsComplete(const BinaryTree *Root) {
+    if(IsBiTreeEmpty(Root)) {
+        return true;
+    }
+    Queue TempQueue;
+    InitQueue(&TempQueue);
+    EnQueue(&TempQueue, (void*)Root);
+
+    int SeeEmpty = 0;
+    BinaryTree *Node;
+
+    while(!QueueEmpty(&TempQueue)) {
+        DeQueue(&TempQueue, (void**)&Node);
+
+        if (Node==NULL) {
+            SeeEmpty++;
+            continue;
+        }
+        if (SeeEmpty) {return false;}
+        EnQueue(&TempQueue, (void*)Node->Left);
+        EnQueue(&TempQueue, (void*)Node->Right);
+    }
+    return true;
+}
+
 
 

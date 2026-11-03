@@ -5,9 +5,9 @@
 #ifndef LINKED_OF_A_BINARY_TREE_LINKEDOFBINARYTREE_H
 #define LINKED_OF_A_BINARY_TREE_LINKEDOFBINARYTREE_H
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include "queue.h"
 typedef char ElementType;
 typedef struct BinaryTreeNode {
     struct BinaryTreeNode *Left;
