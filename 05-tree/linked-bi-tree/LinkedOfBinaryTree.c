@@ -17,6 +17,7 @@ static BinaryTreeNode *NewNode(const ElementType Ch) {
 static void BiTreeVisit( const ElementType Data) {
     printf("%c", Data);
 }
+static void Threading( ThreadBinaryTree *p, ThreadBinaryTree **pre);
 void Init(BinaryTree **root) {
     *root=NULL;
 }
@@ -123,5 +124,63 @@ bool IsComplete(const BinaryTree *Root) {
     return true;
 }
 
+static void Threading( ThreadBinaryTree *p, ThreadBinaryTree **pre) {
+    if (p == NULL) {
+        return;
+    }
+    Threading(p->Left,pre);
+    if (p->Left == NULL) {
+        p->Left=*pre;
+        p->Left_Symbol=1;
+    }if (*pre != NULL&&(*pre)->Right == NULL) {
+        (*pre)->Right=p;
+        (*pre)->Right_Symbol=1;
+    }
+    *pre = p;
+    Threading(p->Right,pre);
+}
+
+void ThreadingBiTree(BinaryTree *Root) {
+    if(IsBiTreeEmpty(Root)) {
+        return;
+    }
+    BinaryTree *pre = NULL;
+    Threading(Root, &pre);
+
+    if (pre != NULL) {
+        pre->Right = NULL;
+        pre->Right_Symbol  = 1;
+    }
+}
 
 
+
+
+/* =====================================================
+ * 中序线索树上的遍历：不用栈、不用递归
+ * ===================================================== */
+
+/* 以 p 为根的子树中，中序第一个结点（一路向左走到底） */
+BinaryTree *FirstNode(BinaryTree *p) {
+    if (p == NULL) return NULL;
+    while (p->Left_Symbol == 0 && p->Left != NULL) {
+        p = p->Left;
+    }
+    return p;
+}
+
+/* 中序线索下 p 的后继 */
+BinaryTree *NextNode(BinaryTree *p) {
+    if (p == NULL) return NULL;
+    if (p->Right_Symbol == 0) {      /* 右指针是孩子 → 后继在右子树最左下 */
+        return FirstNode(p->Right);
+    }
+    return p->Right;                 /* 右指针就是线索 */
+}
+
+/* 线索遍历：一个 for 循环走完全树 */
+void InOrderThread(BinaryTree *root) {
+    for (BinaryTree *p = FirstNode(root); p != NULL; p = NextNode(p)) {
+        BiTreeVisit(p->data);
+    }
+}

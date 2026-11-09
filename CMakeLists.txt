@@ -74,3 +74,16 @@ add_executable(05_linked_bi_tree
 )
 # 让本目标能 #include "queue.h"（只引队列实现，不引 common 的 stack.c，避免与自带 Stack.c 符号冲突）
 target_include_directories(05_linked_bi_tree PRIVATE common)
+
+add_executable(05_tree_and_forest
+    05-tree/TreeAndForest/main.c
+    05-tree/TreeAndForest/TreeAndForest.c
+        05-tree/TreeAndForest/TreeAndForest.h
+)
+add_executable(06_Graph
+        06-Graph/Graph.c
+        06-Graph/Graph.h
+        06-Graph/Main.c
+        06-Graph/TestThing.c
+        06-Graph/TestThing.h
+)
