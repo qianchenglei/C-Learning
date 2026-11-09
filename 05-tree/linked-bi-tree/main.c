@@ -102,15 +102,25 @@ int main(void) {
         check_int ("深度",   BiTreeDepth(root),   c->depth);
         check_int ("结点数", NodeCount(root),     c->nodes);
         check_int ("叶子数", LeafCount(root),     c->leaves);
+        /* 必须在任何会改写 Left/Right 的操作之前跑 */
+        check_bool("完全",   IsComplete(root),    c->complete);
 
         if (c->nodes > 0) {
             char *s;
             s = capture(PreOrder,  root); check_str("先序", s, c->pre);  free(s);
             s = capture(InOrder,   root); check_str("中序", s, c->in);   free(s);
             s = capture(PostOrder, root); check_str("后序", s, c->post); free(s);
-        }
 
-        check_bool("完全", IsComplete(root), c->complete);
+            /* —— 线索化 ——
+               必须放在三个递归遍历之后：线索化会改写 Left/Right，
+               提前做会让递归遍历走错路。 */
+            ThreadingBiTree(root);
+
+            s = capture(InOrderThread, root); check_str("线索", s, c->in); free(s);
+
+            /* 中序第一个结点不该有前驱 */
+            check_bool("首结点无前驱", FirstNode(root)->Left == NULL, true);
+        }
     }
 
     int total = gPass + gFail;
