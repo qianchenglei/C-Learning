@@ -49,3 +49,21 @@ void CreateALGraph(ALGraph *G, RowGraph *Src) {
         G->EdgeNum++;
     }
 }
+
+void InsertALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B) {
+    for (EdgeNode *e = A->FirstEdge; e != NULL; e = e->NextEdge) {
+        if (e->ToVertex == B) {return ;}
+    }
+    EdgeNode* A_Start = InitEdgeNode(B);
+    EdgeNode *B_Start = InitEdgeNode(A);
+    if (A_Start == NULL||B_Start==NULL) {
+        free(A_Start);
+        free(B_Start);
+        return ;
+    }
+    A_Start->NextEdge=A->FirstEdge;
+    A->FirstEdge=A_Start;
+    B_Start->NextEdge=B->FirstEdge;
+    B->FirstEdge=B_Start;
+    G->EdgeNum++;
+}
