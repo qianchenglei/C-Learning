@@ -39,6 +39,9 @@ typedef struct RawGraph {
 }RowGraph;
 
 void InitALGraph(ALGraph *G);
-void CreateALGraph(ALGraph *G,RowGraph *Src);
+void CreateALGraph(ALGraph *G,const RowGraph *Src);
 void InsertALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
+void DeleteALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
+void InsertVertexNode(ALGraph *G,VertexType Data);
+void PrintALGraph(ALGraph *G);
 #endif //C_LEARNING_GRAPH_H
