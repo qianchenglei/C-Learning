@@ -43,5 +43,7 @@ void CreateALGraph(ALGraph *G,const RowGraph *Src);
 void InsertALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
 void DeleteALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
 void InsertVertexNode(ALGraph *G,VertexType Data);
+void DeleteVertexNode(ALGraph *G,VertexNode *Node);
 void PrintALGraph(ALGraph *G);
+void DFSTreverse(ALGraph *G);
 #endif //C_LEARNING_GRAPH_H

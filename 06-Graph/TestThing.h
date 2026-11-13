@@ -8,3 +8,5 @@
 void SmokeTest(void);
 
 #endif //C_LEARNING_TESTTHING_H
+void CrudSmokeTest(void);
+void BfsSmokeTest(void);

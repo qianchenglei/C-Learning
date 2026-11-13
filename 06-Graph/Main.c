@@ -5,5 +5,7 @@
 
 int main(void) {
     SmokeTest();
+    CrudSmokeTest();
+    BfsSmokeTest();
     return 0;
 }
