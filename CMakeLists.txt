@@ -84,6 +84,14 @@ add_executable(06_Graph
         06-Graph/Graph.c
         06-Graph/Graph.h
         06-Graph/Main.c
-        06-Graph/TestThing.c
-        06-Graph/TestThing.h
+        06-Graph/ai-tests/TestThing.c
+        06-Graph/ai-tests/TestThing.h
+        06-Graph/ai-tests/TestDfs.c
+        06-Graph/ai-tests/TestDfs.h
+        06-Graph/ai-tests/TestBfs.c
+        06-Graph/ai-tests/TestBfs.h
 )
+# Main.c 要 include "TestThing.h"；ai-tests 里要 include "Graph.h"
+target_include_directories(06_Graph PRIVATE 06-Graph 06-Graph/ai-tests)
+# 链接 common 静态库：queue.c 的 EnQueue / DeQueue / QueueEmpty 从这里来
+target_link_libraries(06_Graph PRIVATE common)

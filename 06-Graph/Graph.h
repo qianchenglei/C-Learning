@@ -10,6 +10,7 @@
 
 
 
+
 typedef int VertexType;
 typedef struct { int U, V; } Edge;
 
@@ -37,7 +38,7 @@ typedef struct RawGraph {
     const Edge *EFrom;
     int VexNum, EdgeNum;
 }RowGraph;
-
+typedef void (*VisitFn)(VertexNode *V);
 void InitALGraph(ALGraph *G);
 void CreateALGraph(ALGraph *G,const RowGraph *Src);
 void InsertALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
@@ -45,5 +46,6 @@ void DeleteALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
 void InsertVertexNode(ALGraph *G,VertexType Data);
 void DeleteVertexNode(ALGraph *G,VertexNode *Node);
 void PrintALGraph(ALGraph *G);
-void DFSTreverse(ALGraph *G);
+void DFSTraverse(ALGraph *G, VisitFn Visit);
+void BFSTraverse(ALGraph *G, VisitFn Visit);
 #endif //C_LEARNING_GRAPH_H

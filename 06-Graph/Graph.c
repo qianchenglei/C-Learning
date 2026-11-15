@@ -3,7 +3,7 @@
 //
 
 #include "Graph.h"
-
+#include "queue.h"
 #include <string.h>
 
 static void LinkOneToOther(VertexNode *A, EdgeNode *Edge_A) {
@@ -41,10 +41,11 @@ static void FindEdge(ALGraph *G, const VertexNode *A, const VertexNode *B, EdgeN
     (*Back_Prev) = A_Prev;
     (*Back_Edge) = A_Edge;
 }
-static void DFS(VertexNode *V, bool *Visited) {
+static void DFS(VertexNode *V, bool *Visited, VisitFn Visit) {
     Visited[V->Id] = true;
+    Visit(V);
     for (EdgeNode *e = V->FirstEdge; e != NULL; e = e->NextEdge) {
-        if (!Visited[e->ToVertex->Id]) { DFS(e->ToVertex, Visited); }
+        if (!Visited[e->ToVertex->Id]) { DFS(e->ToVertex, Visited, Visit); }
     }
 }
 void InitALGraph(ALGraph *G) {
@@ -155,17 +156,51 @@ void PrintALGraph(ALGraph *G) {
     }
 }
 
-void DFSTreverse(ALGraph *G) {
+void DFSTraverse(ALGraph *G, VisitFn Visit) {
     VertexNode *Tail = G->Head;
     int MaxId = -1;
     while (Tail->NextVertex != NULL) {
         Tail = Tail->NextVertex;
         if (MaxId < Tail->Id) { MaxId = Tail->Id; }
     }
-    bool *Visited=(bool *)malloc(MaxId+1*sizeof(bool));
-    memset(Visited,0,G->VexNum*sizeof(bool));
-    for (VertexNode *v = Tail->NextVertex; v != NULL; v = v->NextVertex) {
-        if (!Visited[v->Id]) { DFS(v,Visited); }
+    bool *Visited = (bool *)malloc((MaxId + 1) * sizeof(bool));
+    if (Visited == NULL) { return; }
+    memset(Visited, 0, (MaxId + 1) * sizeof(bool));
+    for (VertexNode *v = G->Head->NextVertex; v != NULL; v = v->NextVertex) {
+        if (!Visited[v->Id]) { DFS(v, Visited, Visit); }
+    }
+    free(Visited);
+}
+
+void BFSTraverse(ALGraph *G, VisitFn Visit) {
+    VertexNode *Tail = G->Head;
+    int MaxId = -1;
+    while (Tail->NextVertex != NULL) {
+        Tail = Tail->NextVertex;
+        if (MaxId < Tail->Id) { MaxId = Tail->Id; }
+    }
+    bool *Visited = (bool *)malloc((MaxId + 1) * sizeof(bool));
+    if (Visited == NULL) { return; }
+    memset(Visited, 0, (MaxId + 1) * sizeof(bool));
+    for (VertexNode *v = G->Head->NextVertex; v != NULL; v = v->NextVertex) {
+        if (Visited[v->Id]){continue;}
+
+        Visited[v->Id] = true;
+        Queue queue;
+        memset(&queue, 0, (sizeof(queue)));
+        EnQueue(&queue,v);
+
+        while (!QueueEmpty(&queue)) {
+            VertexNode *Cur =NULL;
+            DeQueue(&queue,(void**)&Cur);
+            Visit(Cur);
+            for (EdgeNode *e = Cur->FirstEdge; e != NULL; e = e->NextEdge) {
+                if (!Visited[e->ToVertex->Id]) {
+                    Visited[e->ToVertex->Id] = true;
+                    EnQueue(&queue,e->ToVertex);
+                }
+            }
+        }
     }
     free(Visited);
 }
