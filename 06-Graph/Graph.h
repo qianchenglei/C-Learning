@@ -24,13 +24,13 @@ typedef struct VertexNode {
 typedef struct EdgeNode{
     VertexNode *ToVertex;
     struct EdgeNode *NextEdge;
-    // int Weight;
+
 } EdgeNode;
 
 typedef struct ALGraph {
     VertexNode *Head;
     int VexNum, EdgeNum;
-
+    int Directed;
 }ALGraph;
 
 typedef struct RawGraph {
@@ -39,8 +39,8 @@ typedef struct RawGraph {
     int VexNum, EdgeNum;
 }RowGraph;
 typedef void (*VisitFn)(VertexNode *V);
-void InitALGraph(ALGraph *G);
-void CreateALGraph(ALGraph *G,const RowGraph *Src);
+void InitALGraph(ALGraph *G,int Directed);
+void CreateALGraph(ALGraph *G,const RowGraph *Src,int Directed);
 void InsertALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
 void DeleteALGraphEdge(ALGraph *G,VertexNode *A,VertexNode *B);
 void InsertVertexNode(ALGraph *G,VertexType Data);
@@ -48,4 +48,5 @@ void DeleteVertexNode(ALGraph *G,VertexNode *Node);
 void PrintALGraph(ALGraph *G);
 void DFSTraverse(ALGraph *G, VisitFn Visit);
 void BFSTraverse(ALGraph *G, VisitFn Visit);
+bool TopoSort(ALGraph *G,int *Order);
 #endif //C_LEARNING_GRAPH_H

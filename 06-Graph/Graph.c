@@ -48,15 +48,27 @@ static void DFS(VertexNode *V, bool *Visited, VisitFn Visit) {
         if (!Visited[e->ToVertex->Id]) { DFS(e->ToVertex, Visited, Visit); }
     }
 }
-void InitALGraph(ALGraph *G) {
+void InitALGraph(ALGraph *G,int Directed) {
     G->VexNum = 0;
     G->EdgeNum = 0;
+    G->Directed = Directed;
     G->Head = InitVertexNode(0, -1);
 }
 
-void CreateALGraph(ALGraph *G, const RowGraph *Src) {
+void CreateALGraph(ALGraph *G, const RowGraph *Src, int Directed) {
     VertexNode *FlaxableIdx[Src->VexNum];
     VertexNode *Tail = G->Head;
+    switch (Directed) {
+        case 0: {
+            G->Directed = 0;
+            break;
+        }
+        case 1: {
+            G->Directed = 1;
+            break;
+        }
+        default: {return;}
+    }
     for (int i = 0; i < Src->VexNum; i++) {
         Tail->NextVertex = InitVertexNode(Src->VFrom[i], i);
         Tail = Tail->NextVertex;
@@ -70,8 +82,10 @@ void CreateALGraph(ALGraph *G, const RowGraph *Src) {
         EdgeNode *Edge_A = InitEdgeNode(B);
         LinkOneToOther(A, Edge_A);
 
-        EdgeNode *Edge_B = InitEdgeNode(A);
-        LinkOneToOther(B, Edge_B);
+        if (Directed == 0) {
+            EdgeNode *Edge_B = InitEdgeNode(A);
+            LinkOneToOther(B, Edge_B);
+        }
         G->EdgeNum++;
     }
 }
@@ -81,37 +95,45 @@ void InsertALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
         if (e->ToVertex == B) { return; }
     }
     EdgeNode *A_Start = InitEdgeNode(B);
-    EdgeNode *B_Start = InitEdgeNode(A);
-    if (A_Start == NULL || B_Start == NULL) {
+    EdgeNode *B_Start=NULL;
+    if (G->Directed==0) {
+        B_Start = InitEdgeNode(A);
+    }
+    if (A_Start == NULL ||(G->Directed==0 && B_Start == NULL)) {
         free(A_Start);
         free(B_Start);
         return;
     }
     LinkOneToOther(A, A_Start);
-    LinkOneToOther(B, B_Start);
+    if (G->Directed==0) {
+        LinkOneToOther(B, B_Start);
+    }
     G->EdgeNum++;
 }
 
 void DeleteALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
     EdgeNode *A_Prev = NULL, *A_Edge = NULL;
-    EdgeNode *B_Prev = NULL, *B_Edge = NULL;
     FindEdge(G, A, B, &A_Edge, &A_Prev);
-    FindEdge(G, B, A, &B_Edge, &B_Prev);
-
-    if (A_Edge == NULL || B_Edge == NULL) { return; }
+    if (A_Edge == NULL ) { return; }
     if (A_Prev == NULL) {
         A->FirstEdge = A_Edge->NextEdge;
     } else {
         A_Prev->NextEdge = A_Edge->NextEdge;
     }
-    if (B_Prev == NULL) {
-        B->FirstEdge = B_Edge->NextEdge;
-    } else {
-        B_Prev->NextEdge = B_Edge->NextEdge;
-    }
     free(A_Edge);
-    free(B_Edge);
     G->EdgeNum--;
+    if (G->Directed==0){
+        EdgeNode *B_Prev = NULL, *B_Edge = NULL;
+        FindEdge(G, B, A, &B_Edge, &B_Prev);
+        if (B_Edge == NULL ) { return; }
+        if (B_Prev == NULL) {
+            B->FirstEdge = B_Edge->NextEdge;
+        } else {
+            B_Prev->NextEdge = B_Edge->NextEdge;
+        }
+        free(B_Edge);
+    }
+
 }
 
 void InsertVertexNode(ALGraph *G, VertexType Data) {
@@ -203,4 +225,41 @@ void BFSTraverse(ALGraph *G, VisitFn Visit) {
         }
     }
     free(Visited);
+}
+
+bool TopoSort(ALGraph *G, int *Order) {
+    VertexNode *Tail = G->Head;
+    int MaxId = -1;
+    while (Tail->NextVertex != NULL) {
+        Tail = Tail->NextVertex;
+        if (MaxId < Tail->Id) { MaxId = Tail->Id; }
+    }
+    int *InDegree = (int*)malloc((MaxId+1)*sizeof(int));
+    if (InDegree == NULL) { return false; }
+    memset(InDegree, 0, (MaxId+1) * sizeof(int));
+    for (VertexNode *V =G->Head->NextVertex;V;V=V->NextVertex) {
+        for (EdgeNode *E = V->FirstEdge;E;E=E->NextEdge) {
+            InDegree[E->ToVertex->Id]++;
+        }
+    }
+    Queue Queue;
+    InitQueue(&Queue);
+    for (VertexNode *v=G->Head->NextVertex;v;v=v->NextVertex) {
+        if (InDegree[v->Id] == 0) {
+            EnQueue(&Queue,v);
+        }
+    }
+    int Cut=0;
+    while (!QueueEmpty(&Queue)) {
+        VertexNode *Cur =NULL;
+        DeQueue(&Queue,(void**)&Cur);
+        Order[Cut++]=Cur->Id;
+        for (EdgeNode *e = Cur->FirstEdge; e != NULL; e = e->NextEdge) {
+            if (--InDegree[e->ToVertex->Id] == 0) {
+                EnQueue(&Queue,e->ToVertex);
+            }
+        }
+    }
+    free(InDegree);
+    return Cut==G->VexNum;
 }

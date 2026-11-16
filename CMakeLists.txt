@@ -90,6 +90,10 @@ add_executable(06_Graph
         06-Graph/ai-tests/TestDfs.h
         06-Graph/ai-tests/TestBfs.c
         06-Graph/ai-tests/TestBfs.h
+        06-Graph/ai-tests/TestDirected.c
+        06-Graph/ai-tests/TestDirected.h
+        06-Graph/ai-tests/TestTopo.c
+        06-Graph/ai-tests/TestTopo.h
 )
 # Main.c 要 include "TestThing.h"；ai-tests 里要 include "Graph.h"
 target_include_directories(06_Graph PRIVATE 06-Graph 06-Graph/ai-tests)

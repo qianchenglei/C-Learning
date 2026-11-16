@@ -4,6 +4,8 @@
 #include "TestThing.h"
 #include "TestDfs.h"
 #include "TestBfs.h"
+#include "TestDirected.h"
+#include "TestTopo.h"
 
 int main(void) {
     SmokeTest();
@@ -11,5 +13,12 @@ int main(void) {
     BfsSmokeTest();
     DfsTest();
     BfsTest();
+    DirectedCreateTest();
+    DirectedCrudTest();
+    TopoDagTest();
+    TopoMultiSourceTest();
+    TopoChainTest();
+    TopoCycleTest();
+    TopoReadOnlyTest();
     return 0;
 }
