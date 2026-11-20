@@ -2,7 +2,7 @@
 // Created by 14266 on 2026/11/9.
 //
 
-#include "Graph.h"
+#include "ALGraph.h"
 #include "queue.h"
 #include <string.h>
 
@@ -29,7 +29,7 @@ static EdgeNode *InitEdgeNode(VertexNode *to) {
     return Edge;
 }
 
-static void FindEdge(ALGraph *G, const VertexNode *A, const VertexNode *B, EdgeNode **Back_Edge, EdgeNode **Back_Prev) {
+static void FindEdge(ALGraph *ALG, const VertexNode *A, const VertexNode *B, EdgeNode **Back_Edge, EdgeNode **Back_Prev) {
     (*Back_Prev) = NULL;
     (*Back_Edge) = NULL;
     EdgeNode *A_Prev = NULL, *A_Edge = A->FirstEdge;
@@ -48,23 +48,23 @@ static void DFS(VertexNode *V, bool *Visited, VisitFn Visit) {
         if (!Visited[e->ToVertex->Id]) { DFS(e->ToVertex, Visited, Visit); }
     }
 }
-void InitALGraph(ALGraph *G,int Directed) {
-    G->VexNum = 0;
-    G->EdgeNum = 0;
-    G->Directed = Directed;
-    G->Head = InitVertexNode(0, -1);
+void InitALGraph(ALGraph *ALG,int Directed) {
+    ALG->VexNum = 0;
+    ALG->EdgeNum = 0;
+    ALG->Directed = Directed;
+    ALG->Head = InitVertexNode(0, -1);
 }
 
-void CreateALGraph(ALGraph *G, const RowGraph *Src, int Directed) {
+void CreateALGraph(ALGraph *ALG, const RowGraph *Src, int Directed) {
     VertexNode *FlaxableIdx[Src->VexNum];
-    VertexNode *Tail = G->Head;
+    VertexNode *Tail = ALG->Head;
     switch (Directed) {
         case 0: {
-            G->Directed = 0;
+            ALG->Directed = 0;
             break;
         }
         case 1: {
-            G->Directed = 1;
+            ALG->Directed = 1;
             break;
         }
         default: {return;}
@@ -73,7 +73,7 @@ void CreateALGraph(ALGraph *G, const RowGraph *Src, int Directed) {
         Tail->NextVertex = InitVertexNode(Src->VFrom[i], i);
         Tail = Tail->NextVertex;
         FlaxableIdx[i] = Tail;
-        G->VexNum++;
+        ALG->VexNum++;
     }
     for (int i = 0; i < Src->EdgeNum; i++) {
         VertexNode *A = FlaxableIdx[Src->EFrom[i].U];
@@ -86,34 +86,34 @@ void CreateALGraph(ALGraph *G, const RowGraph *Src, int Directed) {
             EdgeNode *Edge_B = InitEdgeNode(A);
             LinkOneToOther(B, Edge_B);
         }
-        G->EdgeNum++;
+        ALG->EdgeNum++;
     }
 }
 
-void InsertALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
+void InsertALGraphEdge(ALGraph *ALG, VertexNode *A, VertexNode *B) {
     for (EdgeNode *e = A->FirstEdge; e != NULL; e = e->NextEdge) {
         if (e->ToVertex == B) { return; }
     }
     EdgeNode *A_Start = InitEdgeNode(B);
     EdgeNode *B_Start=NULL;
-    if (G->Directed==0) {
+    if (ALG->Directed==0) {
         B_Start = InitEdgeNode(A);
     }
-    if (A_Start == NULL ||(G->Directed==0 && B_Start == NULL)) {
+    if (A_Start == NULL ||(ALG->Directed==0 && B_Start == NULL)) {
         free(A_Start);
         free(B_Start);
         return;
     }
     LinkOneToOther(A, A_Start);
-    if (G->Directed==0) {
+    if (ALG->Directed==0) {
         LinkOneToOther(B, B_Start);
     }
-    G->EdgeNum++;
+    ALG->EdgeNum++;
 }
 
-void DeleteALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
+void DeleteALGraphEdge(ALGraph *ALG, VertexNode *A, VertexNode *B) {
     EdgeNode *A_Prev = NULL, *A_Edge = NULL;
-    FindEdge(G, A, B, &A_Edge, &A_Prev);
+    FindEdge(ALG, A, B, &A_Edge, &A_Prev);
     if (A_Edge == NULL ) { return; }
     if (A_Prev == NULL) {
         A->FirstEdge = A_Edge->NextEdge;
@@ -121,10 +121,10 @@ void DeleteALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
         A_Prev->NextEdge = A_Edge->NextEdge;
     }
     free(A_Edge);
-    G->EdgeNum--;
-    if (G->Directed==0){
+    ALG->EdgeNum--;
+    if (ALG->Directed==0){
         EdgeNode *B_Prev = NULL, *B_Edge = NULL;
-        FindEdge(G, B, A, &B_Edge, &B_Prev);
+        FindEdge(ALG, B, A, &B_Edge, &B_Prev);
         if (B_Edge == NULL ) { return; }
         if (B_Prev == NULL) {
             B->FirstEdge = B_Edge->NextEdge;
@@ -136,8 +136,8 @@ void DeleteALGraphEdge(ALGraph *G, VertexNode *A, VertexNode *B) {
 
 }
 
-void InsertVertexNode(ALGraph *G, VertexType Data) {
-    VertexNode *Tail = G->Head;
+void InsertVertexNode(ALGraph *ALG, VertexType Data) {
+    VertexNode *Tail = ALG->Head;
     int MaxId = -1;
     while (Tail->NextVertex != NULL) {
         Tail = Tail->NextVertex;
@@ -150,26 +150,26 @@ void InsertVertexNode(ALGraph *G, VertexType Data) {
     Cur->FirstEdge = NULL;
     Cur->NextVertex = NULL;
     Tail->NextVertex = Cur;
-    G->VexNum++;
+    ALG->VexNum++;
 }
 
-void DeleteVertexNode(ALGraph *G, VertexNode *Node) {
+void DeleteVertexNode(ALGraph *ALG, VertexNode *Node) {
     while (Node->FirstEdge != NULL) {
         VertexNode *Temp = Node->FirstEdge->ToVertex;
-        DeleteALGraphEdge(G, Node, Temp);
+        DeleteALGraphEdge(ALG, Node, Temp);
     }
-    VertexNode *Prev = G->Head;
+    VertexNode *Prev = ALG->Head;
     while (Prev->NextVertex != Node) {
         Prev = Prev->NextVertex;
     }
     Prev->NextVertex = Node->NextVertex;
     free(Node);
-    G->VexNum--;
+    ALG->VexNum--;
 }
 
-void PrintALGraph(ALGraph *G) {
-    printf("ALGraph |V|=%d |E|=%d\n", G->VexNum, G->EdgeNum);
-    for (VertexNode *v = G->Head->NextVertex; v != NULL; v = v->NextVertex) {
+void PrintALGraph(ALGraph *ALG) {
+    printf("ALGraph |V|=%d |E|=%d\n", ALG->VexNum, ALG->EdgeNum);
+    for (VertexNode *v = ALG->Head->NextVertex; v != NULL; v = v->NextVertex) {
         printf("%3d(VexData=%d):", v->Id, v->VexData);
         for (EdgeNode *e = v->FirstEdge; e != NULL; e = e->NextEdge) {
             printf("->%d", e->ToVertex->Id);
@@ -178,8 +178,8 @@ void PrintALGraph(ALGraph *G) {
     }
 }
 
-void DFSTraverse(ALGraph *G, VisitFn Visit) {
-    VertexNode *Tail = G->Head;
+void DFSTraverse(ALGraph *ALG, VisitFn Visit) {
+    VertexNode *Tail = ALG->Head;
     int MaxId = -1;
     while (Tail->NextVertex != NULL) {
         Tail = Tail->NextVertex;
@@ -188,14 +188,14 @@ void DFSTraverse(ALGraph *G, VisitFn Visit) {
     bool *Visited = (bool *)malloc((MaxId + 1) * sizeof(bool));
     if (Visited == NULL) { return; }
     memset(Visited, 0, (MaxId + 1) * sizeof(bool));
-    for (VertexNode *v = G->Head->NextVertex; v != NULL; v = v->NextVertex) {
+    for (VertexNode *v = ALG->Head->NextVertex; v != NULL; v = v->NextVertex) {
         if (!Visited[v->Id]) { DFS(v, Visited, Visit); }
     }
     free(Visited);
 }
 
-void BFSTraverse(ALGraph *G, VisitFn Visit) {
-    VertexNode *Tail = G->Head;
+void BFSTraverse(ALGraph *ALG, VisitFn Visit) {
+    VertexNode *Tail = ALG->Head;
     int MaxId = -1;
     while (Tail->NextVertex != NULL) {
         Tail = Tail->NextVertex;
@@ -204,7 +204,7 @@ void BFSTraverse(ALGraph *G, VisitFn Visit) {
     bool *Visited = (bool *)malloc((MaxId + 1) * sizeof(bool));
     if (Visited == NULL) { return; }
     memset(Visited, 0, (MaxId + 1) * sizeof(bool));
-    for (VertexNode *v = G->Head->NextVertex; v != NULL; v = v->NextVertex) {
+    for (VertexNode *v = ALG->Head->NextVertex; v != NULL; v = v->NextVertex) {
         if (Visited[v->Id]){continue;}
 
         Visited[v->Id] = true;
@@ -227,8 +227,8 @@ void BFSTraverse(ALGraph *G, VisitFn Visit) {
     free(Visited);
 }
 
-bool TopoSort(ALGraph *G, int *Order) {
-    VertexNode *Tail = G->Head;
+bool TopoSort(ALGraph *ALG, int *Order) {
+    VertexNode *Tail = ALG->Head;
     int MaxId = -1;
     while (Tail->NextVertex != NULL) {
         Tail = Tail->NextVertex;
@@ -237,14 +237,14 @@ bool TopoSort(ALGraph *G, int *Order) {
     int *InDegree = (int*)malloc((MaxId+1)*sizeof(int));
     if (InDegree == NULL) { return false; }
     memset(InDegree, 0, (MaxId+1) * sizeof(int));
-    for (VertexNode *V =G->Head->NextVertex;V;V=V->NextVertex) {
+    for (VertexNode *V =ALG->Head->NextVertex;V;V=V->NextVertex) {
         for (EdgeNode *E = V->FirstEdge;E;E=E->NextEdge) {
             InDegree[E->ToVertex->Id]++;
         }
     }
     Queue Queue;
     InitQueue(&Queue);
-    for (VertexNode *v=G->Head->NextVertex;v;v=v->NextVertex) {
+    for (VertexNode *v=ALG->Head->NextVertex;v;v=v->NextVertex) {
         if (InDegree[v->Id] == 0) {
             EnQueue(&Queue,v);
         }
@@ -261,5 +261,5 @@ bool TopoSort(ALGraph *G, int *Order) {
         }
     }
     free(InDegree);
-    return Cut==G->VexNum;
+    return Cut==ALG->VexNum;
 }

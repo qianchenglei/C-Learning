@@ -3,12 +3,12 @@
 //
 /* 拓扑排序验收：拓扑序不唯一，所以核心断言是「偏序」而不是固定序列。
  * 唯一可以断言完整序列的是链式图 0→1→2→3，它只有一种解。 */
-#include "Graph.h"
+#include "ALGraph.h"
 #include "TestTopo.h"
 #include <assert.h>
 
-static VertexNode *FindById(ALGraph *G, int id) {
-    for (VertexNode *v = G->Head->NextVertex; v; v = v->NextVertex)
+static VertexNode *FindById(ALGraph *ALG, int id) {
+    for (VertexNode *v = ALG->Head->NextVertex; v; v = v->NextVertex)
         if (v->Id == id) return v;
     return NULL;
 }
@@ -51,12 +51,12 @@ void TopoDagTest(void) {
     Edge       E[4] = {{0,1},{0,2},{1,3},{2,3}};
     RowGraph   src  = { V, E, 4, 4 };
 
-    ALGraph G;
-    InitALGraph(&G, 1);
-    CreateALGraph(&G, &src, 1);
+    ALGraph ALG;
+    InitALGraph(&ALG, 1);
+    CreateALGraph(&ALG, &src, 1);
 
     int Order[4] = {-1, -1, -1, -1};
-    assert(TopoSort(&G, Order));        /* 无环必须返回 true */
+    assert(TopoSort(&ALG, Order));        /* 无环必须返回 true */
 
     int Pos[8];
     BuildPos(Order, 4, Pos);
@@ -80,12 +80,12 @@ void TopoMultiSourceTest(void) {
     Edge       E[2] = {{0,2},{1,2}};
     RowGraph   src  = { V, E, 3, 2 };
 
-    ALGraph G;
-    InitALGraph(&G, 1);
-    CreateALGraph(&G, &src, 1);
+    ALGraph ALG;
+    InitALGraph(&ALG, 1);
+    CreateALGraph(&ALG, &src, 1);
 
     int Order[3] = {-1, -1, -1};
-    assert(TopoSort(&G, Order));
+    assert(TopoSort(&ALG, Order));
 
     int Pos[8];
     BuildPos(Order, 3, Pos);
@@ -104,12 +104,12 @@ void TopoChainTest(void) {
     Edge       E[3] = {{0,1},{1,2},{2,3}};
     RowGraph   src  = { V, E, 4, 3 };
 
-    ALGraph G;
-    InitALGraph(&G, 1);
-    CreateALGraph(&G, &src, 1);
+    ALGraph ALG;
+    InitALGraph(&ALG, 1);
+    CreateALGraph(&ALG, &src, 1);
 
     int Order[4] = {-1, -1, -1, -1};
-    assert(TopoSort(&G, Order));
+    assert(TopoSort(&ALG, Order));
     assert(Order[0] == 0 && Order[1] == 1 && Order[2] == 2 && Order[3] == 3);
 
     printf("  [T] 链式唯一序：%d %d %d %d\n",
@@ -125,12 +125,12 @@ void TopoCycleTest(void) {
     Edge       E[3] = {{0,1},{1,2},{2,0}};
     RowGraph   src  = { V, E, 3, 3 };
 
-    ALGraph G;
-    InitALGraph(&G, 1);
-    CreateALGraph(&G, &src, 1);
+    ALGraph ALG;
+    InitALGraph(&ALG, 1);
+    CreateALGraph(&ALG, &src, 1);
 
     int Order[3] = {-1, -1, -1};
-    bool ok = TopoSort(&G, Order);
+    bool ok = TopoSort(&ALG, Order);
 
     assert(!ok);                        /* ← 判环的核心断言 */
     assert(Order[0] == -1 && Order[1] == -1 && Order[2] == -1);
@@ -148,21 +148,21 @@ void TopoReadOnlyTest(void) {
     Edge       E[4] = {{0,1},{0,2},{1,3},{2,3}};
     RowGraph   src  = { V, E, 4, 4 };
 
-    ALGraph G;
-    InitALGraph(&G, 1);
-    CreateALGraph(&G, &src, 1);
+    ALGraph ALG;
+    InitALGraph(&ALG, 1);
+    CreateALGraph(&ALG, &src, 1);
 
     int degBefore[4];
-    for (int i = 0; i < 4; i++) degBefore[i] = OutDegreeOf(FindById(&G, i));
+    for (int i = 0; i < 4; i++) degBefore[i] = OutDegreeOf(FindById(&ALG, i));
 
     int O1[4] = {-1, -1, -1, -1};
     int O2[4] = {-1, -1, -1, -1};
-    assert(TopoSort(&G, O1));
-    assert(TopoSort(&G, O2));          /* 第二次不能被第一次污染 */
+    assert(TopoSort(&ALG, O1));
+    assert(TopoSort(&ALG, O2));          /* 第二次不能被第一次污染 */
 
-    assert(G.VexNum == 4 && G.EdgeNum == 4);
+    assert(ALG.VexNum == 4 && ALG.EdgeNum == 4);
     for (int i = 0; i < 4; i++) {
-        assert(OutDegreeOf(FindById(&G, i)) == degBefore[i]);
+        assert(OutDegreeOf(FindById(&ALG, i)) == degBefore[i]);
         assert(O1[i] == O2[i]);
     }
 

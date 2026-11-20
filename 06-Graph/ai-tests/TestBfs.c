@@ -3,7 +3,7 @@
 // 除了"访问到 + 不重复"，还验证一件事：**访问顺序必须按层**
 //
 #include "TestBfs.h"
-#include "Graph.h"
+#include "ALGraph.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -60,14 +60,14 @@ void BfsTest(void) {
         Edge       E[4] = {{0,1}, {0,2}, {1,2}, {2,3}};
         RowGraph   src  = {V, E, 4, 4};
 
-        ALGraph G;
-        InitALGraph(&G, 0);
-        CreateALGraph(&G, &src, 0);
-        assert(G.VexNum == 4);
-        assert(G.EdgeNum == 4);
+        ALGraph ALG;
+        InitALGraph(&ALG, 0);
+        CreateALGraph(&ALG, &src, 0);
+        assert(ALG.VexNum == 4);
+        assert(ALG.EdgeNum == 4);
 
         g_count = 0;
-        BFSTraverse(&G, RecordVisit);
+        BFSTraverse(&ALG, RecordVisit);
         PrintOrder("BFS-1 连通");
 
         CheckOrder(4);
@@ -86,14 +86,14 @@ void BfsTest(void) {
         Edge       E[2] = {{0,1}, {2,3}};
         RowGraph   src  = {V, E, 4, 2};
 
-        ALGraph G;
-        InitALGraph(&G, 0);
-        CreateALGraph(&G, &src, 0);
-        assert(G.VexNum == 4);
-        assert(G.EdgeNum == 2);
+        ALGraph ALG;
+        InitALGraph(&ALG, 0);
+        CreateALGraph(&ALG, &src, 0);
+        assert(ALG.VexNum == 4);
+        assert(ALG.EdgeNum == 2);
 
         g_count = 0;
-        BFSTraverse(&G, RecordVisit);
+        BFSTraverse(&ALG, RecordVisit);
         PrintOrder("BFS-2 非连通");
 
         CheckOrder(4);
@@ -105,14 +105,14 @@ void BfsTest(void) {
         VertexType V[1] = {10};
         RowGraph   src  = {V, NULL, 1, 0};
 
-        ALGraph G;
-        InitALGraph(&G, 0);
-        CreateALGraph(&G, &src, 0);
-        assert(G.VexNum == 1);
-        assert(G.EdgeNum == 0);
+        ALGraph ALG;
+        InitALGraph(&ALG, 0);
+        CreateALGraph(&ALG, &src, 0);
+        assert(ALG.VexNum == 1);
+        assert(ALG.EdgeNum == 0);
 
         g_count = 0;
-        BFSTraverse(&G, RecordVisit);
+        BFSTraverse(&ALG, RecordVisit);
         PrintOrder("BFS-3 单点");
 
         CheckOrder(1);

@@ -81,8 +81,8 @@ add_executable(05_tree_and_forest
         05-tree/TreeAndForest/TreeAndForest.h
 )
 add_executable(06_Graph
-        06-Graph/Graph.c
-        06-Graph/Graph.h
+        06-Graph/ALGraph.c
+        06-Graph/ALGraph.h
         06-Graph/Main.c
         06-Graph/ai-tests/TestThing.c
         06-Graph/ai-tests/TestThing.h
@@ -94,6 +94,9 @@ add_executable(06_Graph
         06-Graph/ai-tests/TestDirected.h
         06-Graph/ai-tests/TestTopo.c
         06-Graph/ai-tests/TestTopo.h
+        06-Graph/MGraph.h
+        06-Graph/MGraph.c
+        06-Graph/GraphTypes.h
 )
 # Main.c 要 include "TestThing.h"；ai-tests 里要 include "Graph.h"
 target_include_directories(06_Graph PRIVATE 06-Graph 06-Graph/ai-tests)
