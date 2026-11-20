@@ -4,6 +4,7 @@
 //
 #include "TestBfs.h"
 #include "ALGraph.h"
+#include "TestHelper.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -120,4 +121,25 @@ void BfsTest(void) {
     }
 
     printf("bfs OK: 3 组用例全过\n");
+}
+
+/* 真实图验收：AE 实机网络（19 点 / 24 条无向边），从 v0 出发应访问全部 */
+void BfsAeGraphTest(void) {
+    setbuf(stdout, NULL);
+
+    ALGraph ALG;
+    InitALGraph(&ALG, 0);
+    CreateALGraph(&ALG, &AESource, 0);
+    assert(ALG.VexNum == AE_VEX_NUM && ALG.EdgeNum == AE_EDGE_NUM);
+
+    g_count = 0;
+    BFSTraverse(&ALG, RecordVisit);
+    PrintOrder("BFS-AE 19点");
+
+    assert(g_count == AE_VEX_NUM);
+    CheckOrder(AE_VEX_NUM);
+    assert(g_order[0] == 0);   /* 名册第一个顶点就是起点 */
+
+    printf("  [BFS-AE] 19 个顶点全部访问、无重复 OK\n");
+    printf("bfs-ae OK: |V|=%d\n", ALG.VexNum);
 }

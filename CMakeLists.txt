@@ -94,6 +94,10 @@ add_executable(06_Graph
         06-Graph/ai-tests/TestDirected.h
         06-Graph/ai-tests/TestTopo.c
         06-Graph/ai-tests/TestTopo.h
+        06-Graph/ai-tests/TestMGraph.c
+        06-Graph/ai-tests/TestMGraph.h
+        06-Graph/ai-tests/TestHelper.c
+        06-Graph/ai-tests/TestHelper.h
         06-Graph/MGraph.h
         06-Graph/MGraph.c
         06-Graph/GraphTypes.h

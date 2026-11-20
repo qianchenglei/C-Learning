@@ -5,19 +5,10 @@
  * 唯一可以断言完整序列的是链式图 0→1→2→3，它只有一种解。 */
 #include "ALGraph.h"
 #include "TestTopo.h"
+#include "TestHelper.h"
 #include <assert.h>
 
-static VertexNode *FindById(ALGraph *ALG, int id) {
-    for (VertexNode *v = ALG->Head->NextVertex; v; v = v->NextVertex)
-        if (v->Id == id) return v;
-    return NULL;
-}
-
-static int OutDegreeOf(VertexNode *v) {
-    int n = 0;
-    for (EdgeNode *e = v->FirstEdge; e; e = e->NextEdge) n++;
-    return n;
-}
+/* 公用小工具已抽到 TestHelper.h：FindVertexById / VertexDegree */
 
 /* Pos[id] = 该顶点在 Order 里的下标；-1 表示压根没排出来 */
 static void BuildPos(const int *Order, int n, int *Pos) {
@@ -139,7 +130,7 @@ void TopoCycleTest(void) {
 }
 
 /* 图只读：跑完之后边数、出度全都不许变。
- * InDegree 是函数内的临时数组，不能残留在图里 ——
+ * GraphInDegree 是函数内的临时数组，不能残留在图里 ——
  * 所以同一张图连跑两次，结果必须一模一样。 */
 void TopoReadOnlyTest(void) {
     setbuf(stdout, NULL);
@@ -153,7 +144,7 @@ void TopoReadOnlyTest(void) {
     CreateALGraph(&ALG, &src, 1);
 
     int degBefore[4];
-    for (int i = 0; i < 4; i++) degBefore[i] = OutDegreeOf(FindById(&ALG, i));
+    for (int i = 0; i < 4; i++) degBefore[i] = VertexDegree(FindVertexById(&ALG, i));
 
     int O1[4] = {-1, -1, -1, -1};
     int O2[4] = {-1, -1, -1, -1};
@@ -162,7 +153,7 @@ void TopoReadOnlyTest(void) {
 
     assert(ALG.VexNum == 4 && ALG.EdgeNum == 4);
     for (int i = 0; i < 4; i++) {
-        assert(OutDegreeOf(FindById(&ALG, i)) == degBefore[i]);
+        assert(VertexDegree(FindVertexById(&ALG, i)) == degBefore[i]);
         assert(O1[i] == O2[i]);
     }
 

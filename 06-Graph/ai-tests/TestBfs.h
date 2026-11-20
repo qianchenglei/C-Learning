@@ -6,5 +6,6 @@
 #define C_LEARNING_TESTBFS_H
 
 void BfsTest(void);
+void BfsAeGraphTest(void);
 
 #endif //C_LEARNING_TESTBFS_H

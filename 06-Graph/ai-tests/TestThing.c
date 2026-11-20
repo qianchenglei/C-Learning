@@ -3,30 +3,11 @@
 //
 #include "ALGraph.h"
 #include "TestThing.h"
+#include "TestHelper.h"
 #include <assert.h>
 
-static VertexNode *FindById(ALGraph *ALG, int id) {
-    for (VertexNode *v = ALG->Head->NextVertex; v; v = v->NextVertex)
-        if (v->Id == id) return v;
-    return NULL;
-}
-static int DegreeOf(VertexNode *v) {
-    int n = 0;
-    for (EdgeNode *e = v->FirstEdge; e; e = e->NextEdge) n++;
-    return n;
-}
-static bool LinkedTo(VertexNode *a, VertexNode *b) {
-    for (EdgeNode *e = a->FirstEdge; e; e = e->NextEdge)
-        if (e->ToVertex == b) return true;   /* 指针直接比 */
-    return false;
-}
-
-static int SumDegree(ALGraph *ALG) {
-    int sum = 0;
-    for (VertexNode *v = ALG->Head->NextVertex; v; v = v->NextVertex)
-        sum += DegreeOf(v);
-    return sum;
-}
+/* 公用小工具已抽到 TestHelper.h：
+ *   FindVertexById / VertexDegree / VertexLinkedTo / GraphSumDegree */
 
 static VertexNode *TailVertex(ALGraph *ALG) {
     VertexNode *v = ALG->Head;
@@ -61,27 +42,27 @@ void SmokeTest(void) {
     assert(n == 4);
 
     /* ④ 度数 2 / 2 / 3 / 1，v3 是悬挂点 */
-    assert(DegreeOf(FindById(&ALG,0)) == 2);
-    assert(DegreeOf(FindById(&ALG,1)) == 2);
-    assert(DegreeOf(FindById(&ALG,2)) == 3);
-    assert(DegreeOf(FindById(&ALG,3)) == 1);
+    assert(VertexDegree(FindVertexById(&ALG,0)) == 2);
+    assert(VertexDegree(FindVertexById(&ALG,1)) == 2);
+    assert(VertexDegree(FindVertexById(&ALG,2)) == 3);
+    assert(VertexDegree(FindVertexById(&ALG,3)) == 1);
 
     /* ⑤ ∑链长 == 2|E| */
     int sum = 0;
     for (VertexNode *v = ALG.Head->NextVertex; v; v = v->NextVertex)
-        sum += DegreeOf(v);
+        sum += VertexDegree(v);
     assert(sum == 2 * ALG.EdgeNum);
 
     /* ⑥ 每条边两端互指 */
     for (int k = 0; k < src.EdgeNum; k++) {
-        VertexNode *a = FindById(&ALG, E[k].U), *b = FindById(&ALG, E[k].V);
+        VertexNode *a = FindVertexById(&ALG, E[k].U), *b = FindVertexById(&ALG, E[k].V);
         assert(a && b);
-        assert(LinkedTo(a, b) && LinkedTo(b, a));
+        assert(VertexLinkedTo(a, b) && VertexLinkedTo(b, a));
     }
 
     /* ⑦ 顺着 ToVertex 走得通：0 → 2 → 3 */
-    assert(LinkedTo(FindById(&ALG,0), FindById(&ALG,2)));
-    assert(LinkedTo(FindById(&ALG,2), FindById(&ALG,3)));
+    assert(VertexLinkedTo(FindVertexById(&ALG,0), FindVertexById(&ALG,2)));
+    assert(VertexLinkedTo(FindVertexById(&ALG,2), FindVertexById(&ALG,3)));
 
     printf("smoke OK: |V|=%d |E|=%d sum(deg)=%d\n", ALG.VexNum, ALG.EdgeNum, sum);
 }
@@ -98,49 +79,49 @@ void CrudSmokeTest(void) {
     InitALGraph(&ALG, 0);
     CreateALGraph(&ALG, &src, 0);
 
-    VertexNode *v0 = FindById(&ALG,0), *v1 = FindById(&ALG,1);
-    VertexNode *v2 = FindById(&ALG,2), *v3 = FindById(&ALG,3);
+    VertexNode *v0 = FindVertexById(&ALG,0), *v1 = FindVertexById(&ALG,1);
+    VertexNode *v2 = FindVertexById(&ALG,2), *v3 = FindVertexById(&ALG,3);
     assert(v0 && v1 && v2 && v3);
 
-    int edges = ALG.EdgeNum, sum = SumDegree(&ALG);
-    int deg1 = DegreeOf(v1), deg3 = DegreeOf(v3);
+    int edges = ALG.EdgeNum, sum = GraphSumDegree(&ALG);
+    int deg1 = VertexDegree(v1), deg3 = VertexDegree(v3);
 
     /* ⑧ 插一条新边：两点度数各 +1、∑链长 +2、双向互指 */
     InsertALGraphEdge(&ALG, v1, v3);
     assert(ALG.EdgeNum == edges + 1);
-    assert(DegreeOf(v1) == deg1 + 1 && DegreeOf(v3) == deg3 + 1);
-    assert(SumDegree(&ALG) == sum + 2);
-    assert(LinkedTo(v1,v3) && LinkedTo(v3,v1));
+    assert(VertexDegree(v1) == deg1 + 1 && VertexDegree(v3) == deg3 + 1);
+    assert(GraphSumDegree(&ALG) == sum + 2);
+    assert(VertexLinkedTo(v1,v3) && VertexLinkedTo(v3,v1));
     printf("  [C] insert (1,3) OK\n");
 
     /* ⑨ 判重：重复插全不变 */
     InsertALGraphEdge(&ALG, v1, v3);
     assert(ALG.EdgeNum == edges + 1);
-    assert(DegreeOf(v1) == deg1 + 1 && DegreeOf(v3) == deg3 + 1);
-    assert(SumDegree(&ALG) == sum + 2);
+    assert(VertexDegree(v1) == deg1 + 1 && VertexDegree(v3) == deg3 + 1);
+    assert(GraphSumDegree(&ALG) == sum + 2);
     printf("  [C] duplicate insert rejected OK\n");
 
     /* ⑩ 删掉刚插的边：全还原 */
     DeleteALGraphEdge(&ALG, v1, v3);
     assert(ALG.EdgeNum == edges);
-    assert(DegreeOf(v1) == deg1 && DegreeOf(v3) == deg3);
-    assert(SumDegree(&ALG) == sum);
-    assert(!LinkedTo(v1,v3) && !LinkedTo(v3,v1));
+    assert(VertexDegree(v1) == deg1 && VertexDegree(v3) == deg3);
+    assert(GraphSumDegree(&ALG) == sum);
+    assert(!VertexLinkedTo(v1,v3) && !VertexLinkedTo(v3,v1));
     printf("  [D] delete (1,3) OK\n");
 
     /* ⑪ 删不存在的边：两侧都没动手 */
     DeleteALGraphEdge(&ALG, v0, v3);
-    assert(ALG.EdgeNum == edges && SumDegree(&ALG) == sum);
-    assert(DegreeOf(v0) == 2 && DegreeOf(v3) == 1);
+    assert(ALG.EdgeNum == edges && GraphSumDegree(&ALG) == sum);
+    assert(VertexDegree(v0) == 2 && VertexDegree(v3) == 1);
     printf("  [D] delete missing edge: no-op OK\n");
 
     /* ⑫ (0,1) 与 (2,3) 分别覆盖 Prev!=NULL / Prev==NULL 两种改链分支 */
     DeleteALGraphEdge(&ALG, v0, v1);
-    assert(!LinkedTo(v0,v1) && !LinkedTo(v1,v0));
-    assert(ALG.EdgeNum == edges - 1 && SumDegree(&ALG) == sum - 2);
+    assert(!VertexLinkedTo(v0,v1) && !VertexLinkedTo(v1,v0));
+    assert(ALG.EdgeNum == edges - 1 && GraphSumDegree(&ALG) == sum - 2);
     DeleteALGraphEdge(&ALG, v2, v3);
-    assert(!LinkedTo(v2,v3) && !LinkedTo(v3,v2));
-    assert(ALG.EdgeNum == edges - 2 && SumDegree(&ALG) == sum - 4);
+    assert(!VertexLinkedTo(v2,v3) && !VertexLinkedTo(v3,v2));
+    assert(ALG.EdgeNum == edges - 2 && GraphSumDegree(&ALG) == sum - 4);
     printf("  [D] mid-slot / head-slot unlink OK\n");
 
     /* ⑬ 插顶点：进名册、孤立、Id 接上编号 */
@@ -153,8 +134,8 @@ void CrudSmokeTest(void) {
     assert(tail->NextVertex == NULL);
     assert(tail->Id == oldVex);
     assert(tail->FirstEdge == NULL);
-    assert(DegreeOf(tail) == 0);
-    assert(SumDegree(&ALG) == sum - 4);   /* 孤立点不带边 */
+    assert(VertexDegree(tail) == 0);
+    assert(GraphSumDegree(&ALG) == sum - 4);   /* 孤立点不带边 */
     printf("  [C] insert vertex (isolated) OK\n");
 
     PrintALGraph(&ALG);
@@ -209,7 +190,7 @@ void BfsSmokeTest(void) {
     VertexNode **L0 = (VertexNode **)malloc(sizeof(VertexNode *));
     if (L0 == NULL) { free(Visited); return; }
 
-    L0[0] = FindById(&ALG, 0);
+    L0[0] = FindVertexById(&ALG, 0);
     Visited[L0[0]->Id] = true;
 
     printf("BFS: ");
