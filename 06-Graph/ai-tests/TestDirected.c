@@ -71,7 +71,7 @@ void DirectedCrudTest(void) {
     CreateALGraph(&ALG, &src, 1);
 
     VertexNode *v0 = FindVertexById(&ALG,0), *v1 = FindVertexById(&ALG,1);
-    VertexNode *v2 = FindVertexById(&ALG,2), *v3 = FindVertexById(&ALG,3);
+    VertexNode *v3 = FindVertexById(&ALG,3);
     int edges = ALG.EdgeNum;
 
     /* ⑤ 插 3→0：只加一条，v0 的出度不该动 */

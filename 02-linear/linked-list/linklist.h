@@ -5,20 +5,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
+#ifdef _WIN32
+#include <windows.h>   /* ä»… Windowsï¼šEnableANSI() éœ€è¦å¼€è™šæ‹Ÿç»ˆç«¯åºåˆ—ï¼›Linux/macOS é»˜è®¤æ”¯æŒ */
+#endif
 #include <stdint.h>
 #include <time.h>
 #include <inttypes.h>
 #define MaxStudentNameSize 50
-#define LIST_SINGLE       1   // µ¥Á´±í
-#define LIST_DOUBLE       2   // Ë«Á´±í
-#define LIST_CIRC_SINGLE  3   // Ñ­»·µ¥Á´±í
-#define LIST_CIRC_DOUBLE  4   // Ñ­»·Ë«Á´±í
+#define LIST_SINGLE       1   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define LIST_DOUBLE       2   // Ë«ï¿½ï¿½ï¿½ï¿½
+#define LIST_CIRC_SINGLE  3   // Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define LIST_CIRC_DOUBLE  4   // Ñ­ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½
 #define SEARCH_BY_UUID   101
 #define SEARCH_BY_NAME   102
 #define SEARCH_BY_GENDER 103
 #define UUID_MAKER_CODE 0x425951ULL 
-typedef unsigned long long uint64_t;
+/* uint64_t ç”± <stdint.h> æä¾›ï¼Œæ­¤å¤„ä¸å†é‡å¤å®šä¹‰ï¼ˆé‡å¤ typedef ä¼šä¸ç³»ç»Ÿå¤´å†²çªï¼‰ */
 
 typedef struct Students_Data
 {

@@ -29,7 +29,8 @@ static EdgeNode *InitEdgeNode(VertexNode *to) {
     return Edge;
 }
 
-static void FindEdge(ALGraph *ALG, const VertexNode *A, const VertexNode *B, EdgeNode **Back_Edge, EdgeNode **Back_Prev) {
+/* 只在 A 的出边链表里找 A->B，不需要整张图，所以不收 ALG */
+static void FindEdge(const VertexNode *A, const VertexNode *B, EdgeNode **Back_Edge, EdgeNode **Back_Prev) {
     (*Back_Prev) = NULL;
     (*Back_Edge) = NULL;
     EdgeNode *A_Prev = NULL, *A_Edge = A->FirstEdge;
@@ -113,7 +114,7 @@ void InsertALGraphEdge(ALGraph *ALG, VertexNode *A, VertexNode *B) {
 
 void DeleteALGraphEdge(ALGraph *ALG, VertexNode *A, VertexNode *B) {
     EdgeNode *A_Prev = NULL, *A_Edge = NULL;
-    FindEdge(ALG, A, B, &A_Edge, &A_Prev);
+    FindEdge(A, B, &A_Edge, &A_Prev);
     if (A_Edge == NULL ) { return; }
     if (A_Prev == NULL) {
         A->FirstEdge = A_Edge->NextEdge;
@@ -124,7 +125,7 @@ void DeleteALGraphEdge(ALGraph *ALG, VertexNode *A, VertexNode *B) {
     ALG->EdgeNum--;
     if (ALG->Directed==0){
         EdgeNode *B_Prev = NULL, *B_Edge = NULL;
-        FindEdge(ALG, B, A, &B_Edge, &B_Prev);
+        FindEdge(B, A, &B_Edge, &B_Prev);
         if (B_Edge == NULL ) { return; }
         if (B_Prev == NULL) {
             B->FirstEdge = B_Edge->NextEdge;

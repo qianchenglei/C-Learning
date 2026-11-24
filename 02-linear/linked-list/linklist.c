@@ -2,11 +2,15 @@
 
 void EnableANSI()
 {
+#ifdef _WIN32
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	DWORD dwMode = 0;
 	GetConsoleMode(hOut, &dwMode);
-	dwMode |= 0x0004;  // ENABLE_VIRTUAL_TERMINAL_PROCESSING
+	dwMode |= 0x0004;  /* ENABLE_VIRTUAL_TERMINAL_PROCESSING */
 	SetConsoleMode(hOut, dwMode);
+#else
+	/* Linux/macOS çš„ç»ˆç«¯é»˜è®¤å°±æ”¯æŒ ANSI è½¬ä¹‰åºåˆ—ï¼Œæ— éœ€å¤„ç† */
+#endif
 }
 int InitLinkList(LinkList** List,int ListType) {
 	if (List == NULL)
@@ -215,7 +219,7 @@ int IEILASub_cyc_Single(LinkList* List, Students_Data TempData, int index)
 	for (int i = 0; i < index; i++)
 	{
 		CDataUnit = CDataUnit->NextDataUnitAdd;
-		if (CDataUnit == FirstDataUnit)  // ÈÆÁËÒ»È¦»Øµ½Æğµã
+		if (CDataUnit == FirstDataUnit)  // ï¿½ï¿½ï¿½ï¿½Ò»È¦ï¿½Øµï¿½ï¿½ï¿½ï¿½
 		{
 			free(InsertDataUnit);
 			return 203;
@@ -810,15 +814,15 @@ int PrintAllList(LinkList* List) {
 int PrintStudents_Date(Students_Data TempData, int index) {
 
 	printf("This %d Student\n", index);
-	printf("StudentsMark£º%d\n", TempData.StudentsMark);
-	printf("StudentName£º%50s\n", TempData.StudentName);
+	printf("StudentsMarkï¿½ï¿½%d\n", TempData.StudentsMark);
+	printf("StudentNameï¿½ï¿½%50s\n", TempData.StudentName);
 	printf("StudentGender: %s\n", TempData.StudentGender ? "Male" : "Female");
-	printf("StudentUUID£º%" PRIu64 "\n", TempData.StudentUUID);
+	printf("StudentUUIDï¿½ï¿½%" PRIu64 "\n", TempData.StudentUUID);
 	return 0;
 }
-// ==================== ²éÕÒ¹¦ÄÜ ====================
+// ==================== ï¿½ï¿½ï¿½Ò¹ï¿½ï¿½ï¿½ ====================
 
-// µ¥Á´±í²éÕÒ×Óº¯Êı
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½
 int SearchSub_Single(LinkList* List, int SearchField, const void* SearchValue)
 {
 	if (List == NULL) return 201;
@@ -826,7 +830,7 @@ int SearchSub_Single(LinkList* List, int SearchField, const void* SearchValue)
 
 	LinkList* p = List->NextDataUnitAdd;
 	int count = 0;
-	int index = 1;   // Óë´òÓ¡Ë÷ÒıÒ»ÖÂ
+	int index = 1;   // ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 
 	while (p != NULL)
 	{
@@ -843,7 +847,7 @@ int SearchSub_Single(LinkList* List, int SearchField, const void* SearchValue)
 			match = (p->StudentsData.StudentGender == *(const bool*)SearchValue);
 			break;
 		default:
-			return 206;   // Î´Öª²éÕÒ×Ö¶Î
+			return 206;   // Î´Öªï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½
 		}
 
 		if (match)
@@ -858,7 +862,7 @@ int SearchSub_Single(LinkList* List, int SearchField, const void* SearchValue)
 	return count;
 }
 
-// Ë«Á´±í²éÕÒ×Óº¯Êı
+// Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½
 int SearchSub_Double(LinkList* List, int SearchField, const void* SearchValue)
 {
 	if (List == NULL) return 201;
@@ -898,7 +902,7 @@ int SearchSub_Double(LinkList* List, int SearchField, const void* SearchValue)
 	return count;
 }
 
-// Ñ­»·µ¥Á´±í²éÕÒ×Óº¯Êı
+// Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½
 int SearchSub_CycSingle(LinkList* List, int SearchField, const void* SearchValue)
 {
 	if (List == NULL) return 201;
@@ -939,7 +943,7 @@ int SearchSub_CycSingle(LinkList* List, int SearchField, const void* SearchValue
 	return count;
 }
 
-// Ñ­»·Ë«Á´±í²éÕÒ×Óº¯Êı
+// Ñ­ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½
 int SearchSub_CycDouble(LinkList* List, int SearchField, const void* SearchValue)
 {
 	if (List == NULL) return 201;
@@ -980,7 +984,7 @@ int SearchSub_CycDouble(LinkList* List, int SearchField, const void* SearchValue
 	return count;
 }
 
-// Í³Ò»²éÕÒ·Ö·¢º¯Êı
+// Í³Ò»ï¿½ï¿½ï¿½Ò·Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 int SearchDataUnit(LinkList* List, int SearchField, const void* SearchValue)
 {
 	if (List == NULL)
@@ -1009,7 +1013,7 @@ int SearchDataUnit(LinkList* List, int SearchField, const void* SearchValue)
 		break;
 	}
 
-	// Êä³ö½á¹û
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (returecode == 201)
 		printf("The list was uninitialize");
 	else if (returecode == 204)

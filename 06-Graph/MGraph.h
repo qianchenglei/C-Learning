@@ -4,9 +4,11 @@
 
 #ifndef C_LEARNING_MGRAPH_H
 #define C_LEARNING_MGRAPH_H
+#define INF 0x7FFFFFFF
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stdbool.h>
 #include "GraphTypes.h"
 
 typedef int
@@ -24,4 +26,7 @@ typedef struct MGraph {
 
 void InitMGraph(MGraph *MG);
 void CreateMGraph(MGraph *MG,const RowGraph *RG,int Directed);
+void PrintMGraph(const MGraph *MG);
+long MST_MGraph_Prim ( MGraph *MG,VertexType ExpStartVer);
+void DestroyMGraph(MGraph *MG);
 #endif //C_LEARNING_MGRAPH_H

@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <windows.h>
 #include "DataType.h"
 #define MaxDataSize 50
 

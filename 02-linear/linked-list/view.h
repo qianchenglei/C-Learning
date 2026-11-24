@@ -4,9 +4,9 @@
 #define VIEW_H
 
 #include "linklist.h"
-#include <conio.h>
+/* åŸæ¥åŒ…å« <conio.h>ï¼Œä½† view.c åªç”¨äº† getcharï¼ˆæ ‡å‡† Cï¼‰ï¼Œè·¨å¹³å°ä¸éœ€è¦å®ƒ */
 
-// ÊÓÍ¼×´Ì¬³£Á¿
+// ï¿½ï¿½Í¼×´Ì¬ï¿½ï¿½ï¿½ï¿½
 #define VIEW_MAIN            10
 #define VIEW_INIT            11
 #define VIEW_SYSMEMO         12
@@ -20,10 +20,10 @@
 #define VIEW_PRINT_METHOD    20
 #define VIEW_PRINT_PAGE      21
 
-// ·ÖÒ³´òÓ¡Ã¿Ò³ÌõÊı
+// ï¿½ï¿½Ò³ï¿½ï¿½Ó¡Ã¿Ò³ï¿½ï¿½ï¿½ï¿½
 #define PAGE_SIZE 7
 
-// º¯ÊıÉùÃ÷
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool MainMenu(void);
 void ClearInputBuffer(void);
 void PrintAllListPaged(LinkList* list);

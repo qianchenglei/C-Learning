@@ -14,6 +14,7 @@ typedef int VertexType;
 typedef struct {
     int U;
     int V;
+    int Weight;
 } Edge;
 
 /* 原料层：V 表 + E 表。不依赖任何指针，可落盘，可喂给任意存储结构 */
