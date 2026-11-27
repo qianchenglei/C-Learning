@@ -10,6 +10,7 @@
 #include<string.h>
 #include<stdbool.h>
 #include "GraphTypes.h"
+#include "UnionFindDisjointSet.h"
 
 typedef int
 EdgeType;
@@ -28,5 +29,6 @@ void InitMGraph(MGraph *MG);
 void CreateMGraph(MGraph *MG,const RowGraph *RG,int Directed);
 void PrintMGraph(const MGraph *MG);
 long MST_MGraph_Prim ( MGraph *MG,VertexType ExpStartVer);
+long MST_MGraph_Kruskal (MGraph *MG);
 void DestroyMGraph(MGraph *MG);
 #endif //C_LEARNING_MGRAPH_H

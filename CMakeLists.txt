@@ -114,6 +114,7 @@ set(GRAPH_SOURCES
     06-Graph/ai-tests/TestTopo.c
     06-Graph/ai-tests/TestMGraph.c
     06-Graph/ai-tests/TestPrim.c
+    06-Graph/ai-tests/TestKruskal.c
     06-Graph/ai-tests/TestUnionFind.c
     06-Graph/ai-tests/TestHelper.c
         06-Graph/UnionFindDisjointSet.c
@@ -132,6 +133,7 @@ set(GRAPH_HEADERS
     06-Graph/ai-tests/TestTopo.h
     06-Graph/ai-tests/TestMGraph.h
     06-Graph/ai-tests/TestPrim.h
+    06-Graph/ai-tests/TestKruskal.h
     06-Graph/ai-tests/TestUnionFind.h
     06-Graph/ai-tests/TestHelper.h
         06-Graph/UnionFindDisjointSet.h

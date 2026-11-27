@@ -10,6 +10,7 @@
 #include "TestMGraph.h"
 #include "TestUnionFind.h"
 #include "TestPrim.h"
+#include "TestKruskal.h"
 
 int main(void) {
 #ifndef NDEBUG
@@ -37,6 +38,10 @@ int main(void) {
     PrimAEGraphTest();
     PrimStartIndependenceTest();
     PrimDisconnectedTest();
+    KruskalSmallGraphTest();
+    KruskalAEGraphTest();
+    KruskalMatchesPrimTest();
+    KruskalDisconnectedTest();
 #else
     /* Release 构建（定义 NDEBUG）：测试不参与运行 */
     printf("06_Graph: Release build, tests are disabled (NDEBUG).\n");

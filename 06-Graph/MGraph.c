@@ -2,6 +2,9 @@
 // Created by 14266 on 2026/11/20.
 //
 #include  "MGraph.h"
+
+
+
 static int FindVerInMG(MGraph *MG,VertexType ExpStartVer) {
     for(int i=0;i<MG->VexNum;i++) {
         if(MG->Vex[i] == ExpStartVer) {
@@ -9,6 +12,40 @@ static int FindVerInMG(MGraph *MG,VertexType ExpStartVer) {
         }
     }
     return -1;
+}
+/* 把邻接矩阵里的边导成 Edge 数组，返回边的条数（供 Kruskal 用） */
+static int CollectEdgesFromMGraph(const MGraph *MG, Edge *EdgeOut, int EdgeOutCapacity)
+{
+    int EdgeCount = 0;
+
+    for (int RowIdx = 0; RowIdx < MG->IdCap; RowIdx++) {
+        if (MG->Vex[RowIdx] == NOVEX) continue;        /* 空位顶点，跳过 */
+
+        for (int ColIdx = 0; ColIdx < MG->IdCap; ColIdx++) {
+            if (MG->Vex[ColIdx] == NOVEX) continue;    /* 空位顶点，跳过 */
+
+            EdgeType EdgeWeight = MG->Edge[RowIdx * MG->IdCap + ColIdx];
+            if (EdgeWeight == NOEDGE) continue;        /* 没有这条边 */
+
+            /* 无向图：只取上三角，否则每条边会被读两遍 */
+            if (!MG->Directed && ColIdx <= RowIdx) continue;
+
+            if (EdgeCount >= EdgeOutCapacity) return EdgeCount;
+
+            EdgeOut[EdgeCount].U      = RowIdx;
+            EdgeOut[EdgeCount].V      = ColIdx;
+            EdgeOut[EdgeCount].Weight = EdgeWeight;
+            EdgeCount++;
+        }
+    }
+    return EdgeCount;
+}
+static int CompareEdgeByWeight(const void *APrt, const void *BPrt) {
+    const Edge *A = (const Edge *)APrt;
+    const Edge *B = (const Edge *)BPrt;
+    if (A->Weight < B->Weight) return -1;
+    if (A->Weight > B->Weight) return 1;
+    return 0;
 }
 void InitMGraph(MGraph *MG) {
     MG->VexNum=0;
@@ -107,6 +144,32 @@ long MST_MGraph_Prim(MGraph *MG, VertexType ExpStartVer) {
     free(LowerCost);
     free(ParentVer);
     free(Visited);
+    return TotalCost;
+}
+
+long MST_MGraph_Kruskal(MGraph *MG) {
+    if (MG == NULL || MG->IdCap <= 0) return -1;
+    int EdgeCapacity=MG->IdCap*MG->IdCap;
+    Edge *EFrom = (Edge*)malloc(sizeof(Edge)*EdgeCapacity);
+    if (EFrom == NULL) return -1;
+    int EdgeCount = CollectEdgesFromMGraph(MG,EFrom,EdgeCapacity);
+    qsort(EFrom,EdgeCount,sizeof(Edge),CompareEdgeByWeight);
+    UFDSet UFDS;
+    UFDSInit(&UFDS,MG->IdCap);
+    long TotalCost = 0;
+    int PackedCount = 0;
+    int NeedCount = MG->VexNum-1;
+    for(int EdgeIdx = 0; EdgeIdx < EdgeCount&&PackedCount<NeedCount; EdgeIdx++) {
+       if ( UFDSUnion(&UFDS,EFrom[EdgeIdx].U,EFrom[EdgeIdx].V)) {
+           TotalCost += EFrom[EdgeIdx].Weight;
+           PackedCount++;
+           printf("  边 %d - %d   权 %d\n", EFrom[EdgeIdx].U, EFrom[EdgeIdx].V, EFrom[EdgeIdx].Weight);
+
+       }
+    }
+    free(EFrom);
+    UFDSDestroy(&UFDS);
+    if (PackedCount != NeedCount) return -1;
     return TotalCost;
 }
 
